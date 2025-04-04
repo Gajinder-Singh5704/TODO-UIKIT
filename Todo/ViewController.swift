@@ -15,7 +15,9 @@ class ViewController: UIViewController {
     }
     
     var todos = [
-        todo(title: "DO GYM", description: "CARDIO")
+        todo(title: "DO GYM", description: "CARDIO"),
+        todo(title: "TABLE VIEW", description: "TABLE VIEWS AND DELEGATES"),
+        todo(title: "COLLECTIONS", description: "COLLECTIONS AND GRIDS")
     ]
     
     private let heading : UILabel = {
@@ -73,7 +75,7 @@ class ViewController: UIViewController {
         view.addSubview(heading)
         
         NSLayoutConstraint.activate([
-            heading.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            heading.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -15),
             heading.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
@@ -82,7 +84,7 @@ class ViewController: UIViewController {
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 20),
             tableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             tableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor)
@@ -142,17 +144,9 @@ class ViewController: UIViewController {
 extension ViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = SecondViewController()
-        vc.task = todos[indexPath.row].description
+        vc.task = todos[indexPath.row].title
+        vc.desc = todos[indexPath.row].description
         navigationController?.pushViewController(vc, animated: true)
-//            print("Removing: \(names[indexPath.row])")
-//            
-//            guard names.indices.contains(indexPath.row) else { return }
-//            
-//            names.remove(at: indexPath.row)
-//            
-//            tableView.beginUpdates()
-//            tableView.deleteRows(at: [indexPath], with: .right)
-//            tableView.endUpdates()
         }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -174,7 +168,15 @@ extension ViewController : UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = todos[indexPath.row].title
+        cell.layer.borderWidth = 2
+        cell.backgroundColor = .lightGray
+        cell.layer.cornerRadius = 15
+        cell.selectionStyle = .none
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
     }
     
 }
