@@ -9,12 +9,13 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    var names = [
-        "DO GYM",
-        "DO TABLE VIEW",
-        "NAVIGATION",
-        "PHPICKER",
-        "JIRA"
+    struct todo {
+        var title : String?
+        var description :  String?
+    }
+    
+    var todos = [
+        todo(title: "DO GYM", description: "CARDIO")
     ]
     
     private let heading : UILabel = {
@@ -106,19 +107,26 @@ class ViewController: UIViewController {
 
         alert.addTextField { textField in
             textField.placeholder = "ADD TASK"
+        };
+        alert.addTextField { textField in
+            textField.placeholder = "ADD Description"
         }
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { _ in
-            if let todo = alert.textFields?.first?.text {
-                
-                let indexPath = IndexPath(row: self.names.count , section: 0)
-                self.names.append(todo)
+            guard let todo = alert.textFields?[0].text,
+            let description = alert.textFields?[1].text else {
+                return
+            }
+            
+                let indexPath = IndexPath(row: self.todos.count , section: 0)
+                let task = ViewController.todo(title: todo, description: description)
+                self.todos.append(task)
                 self.tableView.beginUpdates()
                 self.tableView.insertRows(at: [indexPath], with: .left)
                 self.tableView.endUpdates()
                 print("Entered Name: \(todo)")
-                print(self.names)
-            }
+                print(self.todos)
+            
         }
 
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -134,7 +142,7 @@ class ViewController: UIViewController {
 extension ViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = SecondViewController()
-        vc.task = names[indexPath.row]
+        vc.task = todos[indexPath.row].description
         navigationController?.pushViewController(vc, animated: true)
 //            print("Removing: \(names[indexPath.row])")
 //            
@@ -149,7 +157,7 @@ extension ViewController : UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            names.remove(at: indexPath.row)
+            todos.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
@@ -160,12 +168,12 @@ extension ViewController : UITableViewDelegate {
 extension ViewController : UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return names.count
+        return todos.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = names[indexPath.row]
+        cell.textLabel?.text = todos[indexPath.row].title
         return cell
     }
     
