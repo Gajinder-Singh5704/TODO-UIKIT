@@ -133,16 +133,27 @@ class ViewController: UIViewController {
 
 extension ViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            print("Removing: \(names[indexPath.row])")
-            
-            guard names.indices.contains(indexPath.row) else { return }
-            
-            names.remove(at: indexPath.row)
-            
-            tableView.beginUpdates()
-            tableView.deleteRows(at: [indexPath], with: .right)
-            tableView.endUpdates()
+        let vc = SecondViewController()
+        vc.task = names[indexPath.row]
+        navigationController?.pushViewController(vc, animated: true)
+//            print("Removing: \(names[indexPath.row])")
+//            
+//            guard names.indices.contains(indexPath.row) else { return }
+//            
+//            names.remove(at: indexPath.row)
+//            
+//            tableView.beginUpdates()
+//            tableView.deleteRows(at: [indexPath], with: .right)
+//            tableView.endUpdates()
         }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            names.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+
 
 }
 
@@ -157,6 +168,7 @@ extension ViewController : UITableViewDataSource{
         cell.textLabel?.text = names[indexPath.row]
         return cell
     }
+    
 }
 
 #Preview{
